@@ -8,6 +8,8 @@ import org.example.lab2.entity.User;
 import org.example.lab2.mapper.UserMapper;
 import org.example.lab2.rest.dto.UserDTO;
 import org.example.lab2.service.UserService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -50,5 +52,18 @@ public class UserController {
     @GetMapping("/{id}")
     public UserDTO getUser(@PathVariable @Parameter(description = "UserID") Long id) {
         return userService.getUser(id);
+    }
+
+    @PostMapping("/authenticate")
+    public ResponseEntity<String> authenticateUser(@RequestParam @Parameter(description = "Имя") String name,
+                                                   @RequestParam @Parameter(description = "Пароль") String password,
+                                                   @RequestParam @Parameter(description = "Вектор биометрических параметров") double[] biometricVector) {
+        boolean isAuthenticated = userService.authenticateUser(name, password, biometricVector);
+
+        if (isAuthenticated) {
+            return ResponseEntity.ok("Authentication successful");
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication failed");
+        }
     }
 }

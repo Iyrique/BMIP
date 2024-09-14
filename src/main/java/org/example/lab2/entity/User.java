@@ -21,8 +21,7 @@ public class User {
 
     private String password;
 
-    @Lob
-    @Column(name = "biometric_vector")
+    @Column(name = "biometric_vector", columnDefinition = "BYTEA")
     private byte[] biometricVector;
 
     public User(String name, String password, byte[] biometricVector) {
