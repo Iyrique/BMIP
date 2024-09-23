@@ -1,5 +1,6 @@
 package org.example.lab2.rest.controller;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -32,6 +33,7 @@ public class UserController {
 
     @Operation(summary = "Регистрация пользователя", description = "Создание нового юзера")
     @PostMapping("/register-dto")
+    @Hidden
     public User registerUser(@RequestBody @Parameter(description = "User") UserDTO userDTO) {
         return userService.registerUser(userDTO.getName(), userDTO.getPassword(), userDTO.getBiometricVector());
     }

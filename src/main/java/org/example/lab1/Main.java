@@ -10,6 +10,16 @@ public class Main {
         System.out.print("Введите длину пароля: ");
         int L = sc.nextInt();
 
+        String alphabet = alphabetChooser();
+
+        String password = lab1(L, alphabet);
+        System.out.println(password);
+
+        sc.close();
+    }
+
+    public static String alphabetChooser() {
+        Scanner sc = new Scanner(System.in);
         System.out.println("Выберите алфавит для генерации пароля:");
         System.out.println("1. Только строчные буквы (a-z)");
         System.out.println("2. Только прописные буквы (A-Z)");
@@ -53,11 +63,7 @@ public class Main {
                 alphabet = Alphabets.LOWERCASE_ENGLISH;
                 break;
         }
-
-        String password = lab1(L, alphabet);
-        System.out.println(password);
-
-        sc.close();
+        return alphabet;
     }
 
     private static String lab1(int L, String alphabet) {
