@@ -61,16 +61,47 @@ public class Main {
     }
 
     private static String lab1(int L, String alphabet) {
-        double mu = 0.5; // Average time for typing one char
-        double sigmaSquared = 0.05; // The variance of the time of entering a char
+        Scanner scanner = new Scanner(System.in);
+        String pass = PasswordGenerator.generatePassword(L, alphabet);
+        StringBuilder sb = new StringBuilder();
+        long[] searchTimes;
+        long[] pressTimes;
+        do {
+            System.out.println("Сгенерированный пароль: " + pass);
+            searchTimes = new long[L];
+            pressTimes = new long[L];
 
-        double expectedTime = MathCalculation.calculateExpectedTime(L, mu);
-        double variance = MathCalculation.calculateVariance(L, sigmaSquared);
+            for (int i = 0; i < L; i++) {
+                System.out.println("Введите символ " + (i + 1) + " пароля:");
 
-        System.out.println("Математическое ожидание времени ввода пароля: " + expectedTime + " секунд");
-        System.out.println("Дисперсия времени ввода пароля: " + variance + " секунд^2");
+                long searchStartTime = System.nanoTime();
+                char input = scanner.next().charAt(0);
+                long searchEndTime = System.nanoTime();
 
-        return PasswordGenerator.generatePassword(L, alphabet);
+                searchTimes[i] = searchEndTime - searchStartTime;
+
+                long pressStartTime = System.nanoTime();
+                sb.append(input);
+                long pressEndTime = System.nanoTime();
+
+                pressTimes[i] = pressEndTime - pressStartTime;
+            }
+        } while (!pass.contentEquals(sb));
+
+        double avgSearchTime = MathCalculation.calculateExpectedTime(searchTimes);
+        double avgPressTime = MathCalculation.calculateExpectedTime(pressTimes);
+
+        double searchVariance = MathCalculation.calculateVariance(searchTimes);
+        double pressVariance = MathCalculation.calculateVariance(pressTimes);
+
+        System.out.println("Среднее время поиска клавиши: " + avgSearchTime / 1e9 + " секунд");
+        System.out.println("Среднее время нажатия клавиши: " + avgPressTime / 1e9 + " секунд");
+
+        System.out.println("Дисперсия времени поиска: " + searchVariance / 1e18 + " секунд^2");
+        System.out.println("Дисперсия времени нажатия: " + pressVariance / 1e18 + " секунд^2");
+
+        return sb.toString();
 
     }
+
 }
