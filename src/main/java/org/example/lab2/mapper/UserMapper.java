@@ -15,6 +15,7 @@ public class UserMapper {
                 user.getId(),
                 user.getName(),
                 user.getPassword(),
+                user.isContainsASD(),
                 biometricVector
         );
     }
@@ -28,6 +29,7 @@ public class UserMapper {
                 userDTO.getId(),
                 userDTO.getName(),
                 userDTO.getPassword(),
+                userDTO.isContainsASD(),
                 biometricVector
         );
     }

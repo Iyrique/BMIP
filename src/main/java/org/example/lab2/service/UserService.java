@@ -26,7 +26,7 @@ public class UserService {
     }
 
     public List<UserDTO> getUsersWithASDInPassword() {
-        List<User> users = userRepository.findByPasswordContaining("asd");
+        List<User> users = userRepository.findByContainsASDTrue();
         return users.stream()
                 .map(UserMapper::toDTO)
                 .collect(Collectors.toList());
@@ -66,7 +66,7 @@ public class UserService {
             sum += Math.pow(vector1[i] - vector2[i], 2);
         }
         double distance = Math.sqrt(sum);
-        double maxPossibleDistance = Math.sqrt(vector1.length); 
-        return 1.0 - (distance / maxPossibleDistance); 
+        double maxPossibleDistance = Math.sqrt(vector1.length);
+        return 1.0 - (distance / maxPossibleDistance);
     }
 }

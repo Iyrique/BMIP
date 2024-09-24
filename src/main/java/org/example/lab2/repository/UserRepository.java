@@ -13,4 +13,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     List<User> findByPasswordContaining(String substring);
 
     Optional<User> findByNameAndPassword(String name, String password);
+
+    List<User> findByContainsASDTrue();
 }

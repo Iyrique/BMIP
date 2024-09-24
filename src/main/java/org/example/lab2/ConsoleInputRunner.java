@@ -9,6 +9,7 @@ import org.example.lab2.service.UserService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.util.Scanner;
 
 @Component
@@ -20,6 +21,12 @@ public class ConsoleInputRunner implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         Scanner scanner = new Scanner(System.in);
+        while (true) {
+            registration(scanner);
+        }
+    }
+
+    private void registration(Scanner scanner) throws IOException {
         System.out.println("Введите длину пароля:");
         int L = scanner.nextInt();
         scanner.nextLine();
@@ -28,38 +35,9 @@ public class ConsoleInputRunner implements CommandLineRunner {
 
         String password = PasswordGenerator.generatePassword(L, alphabet);
 
-        StringBuilder sb = new StringBuilder();
-        long[] searchTimes;
-        long[] pressTimes;
-        do {
-            System.out.println("Сгенерированный пароль: " + password);
-            searchTimes = new long[L];
-            pressTimes = new long[L];
+        System.out.println("Сгенерированный пароль: " + password);
 
-            for (int i = 0; i < L; i++) {
-                System.out.println("Введите символ " + (i + 1) + " пароля:");
-
-                long searchStartTime = System.nanoTime();
-                char input = scanner.next().charAt(0);
-                long searchEndTime = System.nanoTime();
-
-                searchTimes[i] = searchEndTime - searchStartTime;
-
-                long pressStartTime = System.nanoTime();
-                sb.append(input);
-                long pressEndTime = System.nanoTime();
-
-                pressTimes[i] = pressEndTime - pressStartTime;
-            }
-        } while (!password.contentEquals(sb));
-
-        double avgSearchTime = MathCalculation.calculateExpectedTime(searchTimes);
-        double avgPressTime = MathCalculation.calculateExpectedTime(pressTimes);
-
-        System.out.println("Среднее время поиска: " + avgSearchTime / 1e9 + " секунд");
-        System.out.println("Среднее время нажатия: " + avgPressTime / 1e9 + " секунд");
-
-        double[] vector = {avgSearchTime, avgPressTime};
+        double[] vector = enterPass(password);
 
         System.out.println("Введите имя пользователя: ");
         String name = scanner.next();
@@ -67,5 +45,34 @@ public class ConsoleInputRunner implements CommandLineRunner {
         User user = userService.registerUser(name, password, vector);
 
         System.out.println("User id: " + user.getId());
+    }
+
+    private double[] enterPass(String password) throws IOException {
+        int charCode;
+        long startTime = System.currentTimeMillis();
+        long totalKeyPressTime = 0;
+        StringBuilder sb = new StringBuilder();
+        do {
+            if (sb.length() != 0) {
+                sb.delete(0, sb.length());
+                System.out.println("Неверный пароль.");
+            }
+            while ((charCode = System.in.read()) != '\n') {
+                long keyPressStartTime = System.currentTimeMillis();
+                char c = (char) charCode;
+                sb.append(c);
+                long keyPressEndTime = System.currentTimeMillis();
+                totalKeyPressTime += (keyPressEndTime - keyPressStartTime);
+            }
+        } while (!password.contentEquals(sb));
+        System.out.println("Пароль введен верно.");
+        long endTime = System.currentTimeMillis();
+        double totalTime = (endTime - startTime);
+        double idleTime = (totalTime - totalKeyPressTime) / (double) password.length();
+
+        System.out.println("Общее время ввода: " + totalTime + " мс");
+        System.out.println("Время нажатия клавиш: " + totalKeyPressTime + " мс");
+        System.out.println("Среднее время простоя клавиш: " + idleTime + " мс");
+        return new double[]{totalKeyPressTime, idleTime};
     }
 }

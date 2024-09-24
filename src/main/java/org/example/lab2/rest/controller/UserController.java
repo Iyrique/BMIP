@@ -24,7 +24,7 @@ public class UserController {
     private final UserService userService;
 
     @Operation(summary = "Регистрация пользователя", description = "Создание нового юзера")
-    @PostMapping("/register-all")
+    @PostMapping("/register")
     public User registerUser(@RequestParam @Parameter(description = "Имя") String name,
                              @RequestParam @Parameter(description = "Пароль") String password,
                              @RequestParam @Parameter(description = "Вектор биометрических параметров") double[] biometricVector) {
@@ -57,6 +57,7 @@ public class UserController {
     }
 
     @PostMapping("/authenticate")
+    @Hidden
     public ResponseEntity<String> authenticateUser(@RequestParam @Parameter(description = "Имя") String name,
                                                    @RequestParam @Parameter(description = "Пароль") String password,
                                                    @RequestParam @Parameter(description = "Вектор биометрических параметров") double[] biometricVector) {
