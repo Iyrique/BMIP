@@ -4,10 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.example.lab3.generator.UserGenerator;
 
 import javax.persistence.*;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 @Entity
@@ -24,6 +23,8 @@ public class User {
 
     private String name;
 
+    private String secretWord;
+
     private String password;
 
     private boolean containsASD = false;
@@ -31,13 +32,22 @@ public class User {
     @Column(name = "biometric_vector", columnDefinition = "BYTEA")
     private byte[] biometricVector;
 
-    public User(String name, String password, byte[] biometricVector) {
+    @Column(name = "min_vi", columnDefinition = "BYTEA")
+    private byte[] minVi;
+
+    @Column(name = "max_vi", columnDefinition = "BYTEA")
+    private byte[] maxVi;
+
+    public User(String name, String secretWord, String password, byte[] biometricVector, byte[] minVi, byte[] maxVi) {
         this.name = name;
+        this.secretWord = secretWord;
         this.password = password;
         this.biometricVector = biometricVector;
+        this.minVi = minVi;
+        this.maxVi = maxVi;
         checkerOnASD(password);
         try {
-            passwordToHash();
+            this.password = UserGenerator.passwordToHash(password);
         } catch (NoSuchAlgorithmException e) {
             log.error(e.getMessage());
         }
@@ -49,21 +59,4 @@ public class User {
         }
     }
 
-    private void passwordToHash() throws NoSuchAlgorithmException {
-        MessageDigest digest = MessageDigest.getInstance("SHA-256");
-        byte[] encodedHash = digest.digest(password.getBytes(StandardCharsets.UTF_8));
-        this.password = bytesToHex(encodedHash);
-    }
-
-    private static String bytesToHex(byte[] hash) {
-        StringBuilder hexString = new StringBuilder(2 * hash.length);
-        for (byte b : hash) {
-            String hex = Integer.toHexString(0xff & b);
-            if (hex.length() == 1) {
-                hexString.append('0');
-            }
-            hexString.append(hex);
-        }
-        return hexString.toString();
-    }
 }

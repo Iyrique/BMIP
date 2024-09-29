@@ -11,12 +11,17 @@ public class UserMapper {
             return null;
         }
         double[] biometricVector = ByteArrayConverter.byteArrayToDoubleArray(user.getBiometricVector());
+        double[] minVi = ByteArrayConverter.byteArrayToDoubleArray(user.getMinVi());
+        double[] maxVi = ByteArrayConverter.byteArrayToDoubleArray(user.getMaxVi());
         return new UserDTO(
                 user.getId(),
                 user.getName(),
+                user.getSecretWord(),
                 user.getPassword(),
                 user.isContainsASD(),
-                biometricVector
+                biometricVector,
+                minVi,
+                maxVi
         );
     }
 
@@ -25,12 +30,17 @@ public class UserMapper {
             return null;
         }
         byte[] biometricVector = ByteArrayConverter.doubleArrayToByteArray(userDTO.getBiometricVector());
+        byte[] minVi = ByteArrayConverter.doubleArrayToByteArray(userDTO.getMinVi());
+        byte[] maxVi = ByteArrayConverter.doubleArrayToByteArray(userDTO.getMaxVi());
         return new User(
                 userDTO.getId(),
                 userDTO.getName(),
+                userDTO.getSecretWord(),
                 userDTO.getPassword(),
                 userDTO.isContainsASD(),
-                biometricVector
+                biometricVector,
+                minVi,
+                maxVi
         );
     }
 }

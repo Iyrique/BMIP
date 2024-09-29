@@ -26,16 +26,17 @@ public class UserController {
     @Operation(summary = "Регистрация пользователя", description = "Создание нового юзера")
     @PostMapping("/register")
     public User registerUser(@RequestParam @Parameter(description = "Имя") String name,
+                             @RequestParam @Parameter(description = "Идентифицирующее слово") String secretWord,
                              @RequestParam @Parameter(description = "Пароль") String password,
                              @RequestParam @Parameter(description = "Вектор биометрических параметров") double[] biometricVector) {
-        return userService.registerUser(name, password, biometricVector);
+        return userService.registerUser(name, secretWord, password, biometricVector);
     }
 
     @Operation(summary = "Регистрация пользователя", description = "Создание нового юзера")
     @PostMapping("/register-dto")
     @Hidden
     public User registerUser(@RequestBody @Parameter(description = "User") UserDTO userDTO) {
-        return userService.registerUser(userDTO.getName(), userDTO.getPassword(), userDTO.getBiometricVector());
+        return userService.registerUser(userDTO.getName(), userDTO.getSecretWord(), userDTO.getPassword(), userDTO.getBiometricVector());
     }
 
     @Operation(summary = "Получение всех юзеров")
@@ -56,17 +57,17 @@ public class UserController {
         return userService.getUser(id);
     }
 
-    @PostMapping("/authenticate")
-    @Hidden
-    public ResponseEntity<String> authenticateUser(@RequestParam @Parameter(description = "Имя") String name,
-                                                   @RequestParam @Parameter(description = "Пароль") String password,
-                                                   @RequestParam @Parameter(description = "Вектор биометрических параметров") double[] biometricVector) {
-        boolean isAuthenticated = userService.authenticateUser(name, password, biometricVector);
-
-        if (isAuthenticated) {
-            return ResponseEntity.ok("Authentication successful");
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication failed");
-        }
-    }
+//    @PostMapping("/authenticate")
+//    @Hidden
+//    public ResponseEntity<String> authenticateUser(@RequestParam @Parameter(description = "Имя") String name,
+//                                                   @RequestParam @Parameter(description = "Пароль") String password,
+//                                                   @RequestParam @Parameter(description = "Вектор биометрических параметров") double[] biometricVector) {
+//        boolean isAuthenticated = userService.authenticateUser(name, password, biometricVector);
+//
+//        if (isAuthenticated) {
+//            return ResponseEntity.ok("Authentication successful");
+//        } else {
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication failed");
+//        }
+//    }
 }
